@@ -1,0 +1,478 @@
+================================================================================
+                    MANUAL DE USUARIO COMPLETO
+              GESTOR DE PROYECTOS TI - SISTEMA EVM
+================================================================================
+
+Version: 1.0
+Fecha: 23 de noviembre de 2026
+Aplicacion: Gestor de Proyectos de Tecnologias de la Informacion con Valor Ganado (EVM)
+Tecnologias: React + Vite (frontend), Express + PostgreSQL (backend)
+
+================================================================================
+1. INTRODUCCION
+================================================================================
+
+El Gestor de Proyectos TI es una aplicacion web disenada para administrar
+proyectos de Tecnologias de la Informacion enfocada en la metodologia Valor
+Ganado (EVM). Permite planificar, ejecutar, monitorear y controlar proyectos
+desde su acta de constitucion hasta el cierre, incluyendo gestion de riesgos,
+calidad, equipo, costos, cronograma y cambios.
+
+La aplicacion almacena los datos en una base de datos PostgreSQL, por lo que
+todos los usuarios que accedan veran la misma informacion actualizada en
+tiempo real.
+
+================================================================================
+2. REQUISITOS DEL SISTEMA
+================================================================================
+
+2.1 Requisitos de software
+- Node.js 18 o superior (verificado con Node 20 y 24) y npm.
+- PostgreSQL 12 o superior, instalado y corriendo localmente.
+- Navegador web moderno (Chrome, Edge, Firefox).
+- Acceso a internet (opcional, solo para el Asistente de IA mediante Groq).
+
+2.2 Puertos utilizados
+------------------------------------------
+| Servicio      | Puerto | URL                            |
+------------------------------------------
+| Backend       | 3000   | http://localhost:3000          |
+| Frontend      | 5173   | http://localhost:5173          |
+------------------------------------------
+
+================================================================================
+3. INSTALACION Y PUESTA EN MARCHA
+================================================================================
+
+La aplicacion requiere DOS procesos corriendo al mismo tiempo: el backend y
+el frontend.
+
+Paso 1: Abrir dos terminales
+Abre dos ventanas de terminal (PowerShell o CMD) en la carpeta raiz del proyecto:
+  C:\Users\User\Desktop\PROYECTO FINAL_GESTION DE PROYECTOS\GESTION-PROGRAMA-main\GESTION-PROGRAMA-main
+
+Paso 2: Levantar el backend (Terminal 1)
+  npm run server
+Deberas ver un banner confirmando que el servidor inicio en http://localhost:3000.
+
+[CAPTURA 3.1: Terminal mostrando el comando npm run server y el banner de Servidor iniciado correctamente en el puerto 3000.]
+
+Paso 3: Levantar el frontend (Terminal 2)
+  npm run dev
+Vite mostrara la URL local, normalmente http://localhost:5173.
+
+[CAPTURA 3.2: Terminal mostrando el comando npm run dev y la direccion http://localhost:5173.]
+
+Paso 4: Verificar funcionamiento
+Abre en el navegador:
+  http://localhost:3000/health
+Debe responder algo como:
+  {"status":"ok","timestamp":"...","databaseConfigured":true,"aiConfigured":true}
+
+[CAPTURA 3.3: Navegador mostrando el endpoint /health con databaseConfigured: true.]
+
+Importante: Si cierras las terminales, los servidores se detienen.
+PostgreSQL permanece como servicio de Windows, por lo que no necesitas
+reiniciarlo cada vez.
+
+================================================================================
+4. PRIMER ACCESO Y DASHBOARD
+================================================================================
+
+Abre en el navegador:
+  http://localhost:5173
+
+Veras el Dashboard general, que es la pantalla inicial. Muestra:
+- Lista de todos los proyectos creados.
+- Tarjetas resumen: total de proyectos, en riesgo, saludables.
+- Grafico comparativo de CPI y SPI entre todos los proyectos.
+- Botones para crear proyecto nuevo, ver detalle, editar o eliminar.
+
+[CAPTURA 4.1: Pantalla principal del Dashboard con la lista de proyectos y tarjetas resumen.]
+
+[CAPTURA 4.2: Grafico comparativo de CPI y SPI del portafolio de proyectos.]
+
+================================================================================
+5. NAVEGACION GENERAL
+================================================================================
+
+La aplicacion tiene un sidebar oscuro a la izquierda con los modulos
+disponibles. Al seleccionar un proyecto, aparecen sub-secciones dentro de
+cada modulo.
+
+Modulos principales:
+1. Proyectos              - vuelve al Dashboard.
+2. Resumen ejecutivo      - tablero con semaforos (CPI/SPI), reporte completo y Asistente de IA.
+3. Acta y Alcance         - diagnostico, blueprint y acta formal.
+4. EDT y Cronograma       - estructura de desglose, Gantt, ruta critica.
+5. Equipo y Recursos      - matriz RACI y costeo.
+6. Valor Ganado (EVM)     - fechas de corte, metricas, Curva S.
+7. Evaluacion Economica   - TCO, ROI, payback.
+8. Calidad                - auditorias, Pareto, CoQ.
+9. Riesgos                - matriz P x I, EMV, arbol de decision.
+10. Control de Cambios    - bitacora de solicitudes de cambio.
+
+[CAPTURA 5.1: Sidebar oscuro mostrando todos los modulos de navegacion.]
+
+================================================================================
+6. CREAR O EDITAR UN PROYECTO
+================================================================================
+
+Desde el Dashboard, haz clic en Nuevo Proyecto o selecciona un proyecto
+existente y elige editar.
+
+6.1 Informacion Basica
+Llena los siguientes campos obligatorios:
+- Nombre del Proyecto (minimo 3 caracteres, solo letras y simbolos permitidos).
+- Descripcion (minimo 10 caracteres).
+- Presupuesto Autorizado (BAC) - numero mayor a cero, maximo $10,000,000.
+- Administrador del Proyecto y Asistente del Proyecto (opcionales, solo letras).
+- Fecha de Inicio y Fecha de Fin Estimada (la fin debe ser posterior al inicio).
+
+[CAPTURA 6.1: Formulario Informacion Basica del proyecto con todos los campos llenados.]
+
+6.2 Equipo del Proyecto
+Agrega al menos un miembro:
+1. Escribe el Nombre del Miembro y su Rol.
+2. Haz clic en Agregar.
+3. Repite para todos los integrantes.
+
+[CAPTURA 6.2: Seccion Equipo del Proyecto con miembros agregados.]
+
+6.3 Planificacion de tareas (WBS)
+1. Haz clic en Agregar fase y ponle nombre (ej. Analisis y Diseno).
+2. Dentro de cada fase, haz clic en Agregar tarea.
+3. Para cada tarea llena:
+   - Entregable (obligatorio).
+   - ID (ej. T-01-01).
+   - Nombre de la tarea (obligatorio).
+   - Tiempos PERT: Optimista, Estimado, Pesimista (dias).
+   - Predecesoras - IDs de tareas previas separadas por coma (opcional).
+   - Costo de la tarea.
+   - Responsable (selecciona del equipo).
+
+[CAPTURA 6.3: WBS con fases y tareas cargadas, mostrando tiempos PERT y predecesoras.]
+
+[CAPTURA 6.4: Mensaje de Planificacion valida indicando que la ruta critica se puede calcular.]
+
+4. Cuando termines, haz clic en Guardar Proyecto.
+
+================================================================================
+7. DETALLE DEL PROYECTO - RESUMEN EJECUTIVO
+================================================================================
+
+Al seleccionar un proyecto, entra a su detalle. La seccion activa por defecto
+es Resumen ejecutivo.
+
+7.1 Tablero de Control
+Muestra semaforos de:
+- CPI (Indice de Desempeno de Costo).
+- SPI (Indice de Desempeno de Cronograma).
+- Exposicion neta de riesgos (EMV).
+- Contingencia disponible.
+- Indicadores de calidad (DRE, cumplimiento de auditorias, MTBF, cobertura).
+
+[CAPTURA 7.1: Tablero de Control con semaforos verde/naranja/rojo y sus valores.]
+
+7.2 Generar Reporte Completo (NUEVO)
+Debajo del titulo Tablero de Control encontraras dos botones:
+
+| Boton                                              | Funcion                                                                |
+|----------------------------------------------------|------------------------------------------------------------------------|
+| Generar Reporte Completo del Proyecto              | Abre una ventana del navegador con el reporte HTML completo de todas   |
+|                                                    | las secciones del proyecto, incluyendo graficos SVG (Curva S, Matriz   |
+|                                                    | de Riesgos, Pareto de defectos).                                       |
+| Descargar Reporte (.html)                          | Descarga el mismo reporte como archivo .html para guardar, imprimir o  |
+|                                                    | enviarlo por correo.                                                   |
+
+[CAPTURA 7.2: Los dos botones de reporte debajo del Tablero de Control.]
+
+[CAPTURA 7.3: Ventana del reporte HTML completo mostrando Resumen Ejecutivo, Acta y Alcance, EDT, EVM, Calidad, Riesgos y Control de Cambios.]
+
+[CAPTURA 7.4: Parte del reporte mostrando la Curva S (PV, EV, AC) y la Matriz de Riesgos P x I.]
+
+7.3 Asistente de IA
+Si esta configurada la clave de Groq, puedes hacer clic en Analizar con IA
+para recibir recomendaciones de viabilidad del proyecto basadas en los datos
+actuales (EVM, riesgos, calidad, cronograma).
+
+[CAPTURA 7.5: Panel del Asistente de IA con el boton Analizar con IA y el resultado del analisis.]
+
+[CAPTURA 7.6: Informacion del proyecto (PM, fechas, equipo) y metadata (fases, tareas, periodo).]
+
+================================================================================
+8. DETALLE DEL PROYECTO - ACTA Y ALCANCE
+================================================================================
+
+Tiene tres pestanas:
+
+8.1 Diagnostico
+- Arbol de problemas: Problema central, causas y efectos.
+- Tecnica de las 5 preguntas clave (PMP): Que?, Por que?, A quienes afecta?, Cual es la consecuencia?, Que tan urgente es?.
+- Justificacion: Pertinencia, urgencia, viabilidad e impacto.
+
+[CAPTURA 8.1: Pestana Diagnostico con arbol de problemas, PMP y justificacion completos.]
+
+8.2 Blueprint
+Llena todos los campos:
+- Proposito, objetivos medibles, alcance incluido y excluido, entregables, stack/arquitectura, supuestos, restricciones, hitos macro y criterios de exito.
+
+[CAPTURA 8.2: Pestana Blueprint con todos los campos llenados.]
+
+8.3 Acta formal
+Muestra el acta de constitucion del proyecto. Puedes:
+- Descargar como Markdown (archivo .md).
+- Imprimir / Guardar como PDF (usando la funcion de impresion del navegador).
+
+[CAPTURA 8.3: Acta formal generada con botones de descargar e imprimir.]
+
+================================================================================
+9. DETALLE DEL PROYECTO - EDT Y CRONOGRAMA
+================================================================================
+
+Tiene dos pestanas:
+
+9.1 Estructura (EDT)
+Muestra todas las fases y tareas del WBS con:
+- Nombre de la tarea, entregable, duracion, costo, responsable, predecesoras y porcentaje de avance.
+
+[CAPTURA 9.1: Tabla WBS con tareas, entregables, responsables y predecesoras.]
+
+9.2 Cronograma
+Incluye:
+- Diagrama de Gantt: linea de tiempo de las tareas.
+- Ruta critica (CPM/PERT): secuencia de tareas que determina la duracion minima del proyecto.
+- Diccionario EDT: tabla detallada de cada actividad.
+- Validacion de dependencias: detecta errores en la planificacion.
+
+[CAPTURA 9.2: Diagrama de Gantt con la ruta critica resaltada.]
+
+[CAPTURA 9.3: Diccionario EDT con detalle de actividades y dependencias.]
+
+================================================================================
+10. DETALLE DEL PROYECTO - EQUIPO Y RECURSOS
+================================================================================
+
+Tiene dos pestanas:
+
+10.1 Asignacion (RACI)
+Matriz de responsabilidades por tarea:
+- R = Responsable
+- A = Accountable
+- C = Consultado
+- I = Informado
+
+[CAPTURA 10.1: Matriz RACI con tareas en filas y miembros del equipo en columnas.]
+
+10.2 Costeo (Recursos)
+Configura y costea el equipo:
+- Recursos: rol, nombre, tipo (interno/externo), salario o costo hora, dias asignados, dedicacion %.
+- Configuracion: horas laborales/mes, factor de carga prestacional, recargo externo (IVA), horas por dia.
+- Items de costo: tecnologia/infraestructura, costos fijos, costos indirectos.
+- Reservas: contingencia (riesgos conocidos, dentro de la linea base) y gestion (riesgos desconocidos, fuera de la linea base).
+
+[CAPTURA 10.2: Tabla de recursos con costeo de mano de obra, subtotales y totales.]
+
+[CAPTURA 10.3: Resumen de costos estimados con reserva de contingencia y gestion.]
+
+[CAPTURA 10.4: Boton Usar como BAC del proyecto para actualizar el presupuesto autorizado.]
+
+================================================================================
+11. DETALLE DEL PROYECTO - VALOR GANADO (EVM)
+================================================================================
+
+Esta es una de las secciones mas importantes.
+
+11.1 Agregar Fecha de Corte
+Haz clic en Agregar Fecha de Corte y llena:
+- Fecha: debe estar entre la fecha de inicio y fin del proyecto.
+- % Completado: avance real del proyecto (0 a 100).
+- AC devengado (USD): costo real acumulado.
+- Compromiso pendiente (USD): ordenes de compra emitidas, aun no pagadas.
+- Pagado (USD): desembolsos reales efectuados.
+
+[CAPTURA 11.1: Formulario Nueva Fecha de Corte con los campos llenados.]
+
+[CAPTURA 11.2: Lista de fechas de corte registradas con porcentaje y costo de cada una.]
+
+11.2 Metricas EVM
+Una vez hay una fecha de corte, veras:
+- Valores Base: BAC, PV, EV, AC.
+- Variaciones: CV, SV, CPI, SPI.
+- Pronosticos: EAC (optimista, realista, pesimista, excepcional), ETC, VAC, TCPI.
+- Curva S: grafico comparando PV (planificado), EV (ganado real) y AC (costo real).
+
+[CAPTURA 11.3: Metricas EVM con CPI y SPI en rojo (proyecto en perdida).]
+
+[CAPTURA 11.4: Curva S con lineas solidas (datos reales) y punteadas (proyeccion).]
+
+Interpretacion rapida:
+- CPI >= 1.0: dentro del presupuesto. CPI < 1.0: sobrecosto.
+- SPI >= 1.0: a tiempo o adelantado. SPI < 1.0: retraso.
+
+================================================================================
+12. DETALLE DEL PROYECTO - EVALUACION ECONOMICA
+================================================================================
+
+Calcula la viabilidad financiera del proyecto:
+- TCO: Costo Total de Propiedad.
+- ROI: Retorno de Inversion.
+- Payback: periodo de recuperacion de la inversion.
+
+[CAPTURA 12.1: Panel de Evaluacion Economica con TCO, ROI y periodo de recuperacion.]
+
+================================================================================
+13. DETALLE DEL PROYECTO - CALIDAD
+================================================================================
+
+Incluye:
+
+13.1 Auditorias QA/QC
+Registra auditorias con codigo, tipo (QA/QC), alcance, fecha, resultado (Aprobado/Con observaciones/No conforme) y horas.
+
+[CAPTURA 13.1: Tabla de auditorias QA/QC con resultados.]
+
+13.2 Costo de Calidad (CoQ)
+- Prevencion, Evaluacion, Fallas internas, Fallas externas.
+
+13.3 Registro de defectos
+Categoria, fecha, cantidad y descripcion. Se genera automaticamente un diagrama de Pareto para identificar las categorias de defectos mas frecuentes.
+
+[CAPTURA 13.2: Pareto de defectos con barras y linea acumulada.]
+
+[CAPTURA 13.3: Resumen de calidad con % cumplimiento, horas de control y auditorias pendientes.]
+
+================================================================================
+14. DETALLE DEL PROYECTO - RIESGOS
+================================================================================
+
+Incluye:
+
+14.1 Registro y matriz P x I
+Tabla de riesgos con descripcion, categoria RBS, tipo (Amenaza/Oportunidad), probabilidad (1-5), impacto (1-5), severidad, impacto monetario, EMV, respuesta y dueno.
+
+La matriz 5x5 muestra la distribucion de riesgos por probabilidad e impacto.
+
+[CAPTURA 14.1: Tabla de riesgos con EMV y matriz P x I.]
+
+[CAPTURA 14.2: Matriz P x I con colores de severidad (verde, amarillo, naranja, rojo).]
+
+14.2 Arbol de decision
+Compara opciones (ej. desarrollo interno vs. consultoria externa) con inversion base, ramas de probabilidad e impacto, y calculo del EMV total para identificar la mejor alternativa.
+
+[CAPTURA 14.3: Arbol de decision con opciones y recomendacion resaltada.]
+
+================================================================================
+15. DETALLE DEL PROYECTO - CONTROL DE CAMBIOS
+================================================================================
+
+Bitacora de solicitudes de cambio. Reglas clave:
+- Un cambio NO afecta el BAC hasta que este en estado Aprobado y se aplique explicitamente.
+- Estados: Propuesto, Aprobado, Rechazado.
+
+Para cada solicitud registra:
+- Codigo, fecha, descripcion del cambio, entregable afectado, horas, tarifa, estado, aprobador y version.
+
+[CAPTURA 15.1: Tabla de solicitudes de cambio con estados y costos.]
+
+[CAPTURA 15.2: Boton Aplicar cambios aprobados al BAC para actualizar el presupuesto.]
+
+================================================================================
+16. SOLUCION DE PROBLEMAS COMUNES
+================================================================================
+
+| Problema                          | Causa probable                     | Solucion                                               |
+|-----------------------------------|------------------------------------|--------------------------------------------------------|
+| No se pudo conectar con el servidor | Backend no esta corriendo         | Ejecuta npm run server en una terminal                 |
+| Dashboard vacio                   | Solo levantaste un servidor        | Levanta ambos: npm run server y npm run dev            |
+| EADDRINUSE en puerto 3000         | Algo usa el puerto 3000            | Cambia PORT en .env.local o cierra el otro proceso     |
+| db:init falla al conectar         | PostgreSQL no esta corriendo       | Inicia el servicio postgresql-x64-18 desde Servicios   |
+| Boton Analizar con IA da error    | Falta GROQ_API_KEY en .env.local   | Agrega la clave; el resto de la app funciona igual     |
+
+[CAPTURA 16.1: Endpoint /health mostrando databaseConfigured: true y aiConfigured: true.]
+
+================================================================================
+17. GLOSARIO RAPIDO
+================================================================================
+
+| Termino         | Significado                                                           |
+|-----------------|-----------------------------------------------------------------------|
+| BAC             | Presupuesto Autorizado (cuanto se planeo gastar en total).            |
+| PV              | Valor Planificado (cuanto deberia haberse gastado hasta hoy).         |
+| EV              | Valor Ganado (cuanto trabajo real se completo, en dinero).            |
+| AC              | Costo Real (cuanto se gasto realmente hasta hoy).                     |
+| CV              | Variacion de Costo = EV - AC. Positivo = ahorro.                      |
+| SV              | Variacion de Cronograma = EV - PV. Positivo = adelanto.               |
+| CPI             | Indice de Desempeno de Costo = EV / AC.                               |
+| SPI             | Indice de Desempeno de Cronograma = EV / PV.                          |
+| EAC             | Estimacion al Completo (cuanto costara al terminar).                  |
+| VAC             | Variacion al Completo = BAC - EAC.                                    |
+| WBS/EDT         | Estructura de Desglose del Trabajo.                                   |
+| RACI            | Matriz de responsabilidades (R, A, C, I).                             |
+| Gantt           | Diagrama de barras del cronograma.                                    |
+| Ruta critica    | Secuencia de tareas que determina la duracion minima del proyecto.    |
+
+================================================================================
+18. ANEXO - PROYECTOS DE EJEMPLO
+================================================================================
+
+El sistema incluye proyectos precargados para demostracion:
+
+1. Sistema de Facturacion Electronica - PyMES   - CPI 0.50, SPI 0.62 (Perdida).
+2. App de Inventario Minorista                  - CPI 1.00, SPI 1.00 (Estable).
+3. Plataforma E-learning Universitaria          - CPI 1.80, SPI 1.50 (Ganancia).
+4. Sistema de Gestion de Inventario - Cadena de Farmacias - CPI 0.51, SPI 0.60 (Perdida, creado como ejemplo adicional con todos los campos llenos).
+
+================================================================================
+19. LISTA DE CAPTURAS REQUERIDA PARA EL MANUAL
+================================================================================
+
+Si estas armando el documento fisico, esta es la lista de verificacion de
+imagenes que debes incluir:
+
+#  Descripcion del captura                    Modulo
+-----------------------------------------------------------
+3.1 Terminal backend corriendo (npm run server)     Instalacion
+3.2 Terminal frontend corriendo (npm run dev)       Instalacion
+3.3 Navegador en /health con databaseConfigured: true  Instalacion
+4.1 Dashboard con lista de proyectos                Dashboard
+4.2 Grafico comparativo CPI/SPI                     Dashboard
+5.1 Sidebar con modulos                             Navegacion
+6.1 Formulario Informacion Basica                   Nuevo proyecto
+6.2 Equipo del Proyecto con miembros                Nuevo proyecto
+6.3 WBS con fases y tareas                          Nuevo proyecto
+6.4 Mensaje Planificacion valida                    Nuevo proyecto
+7.1 Tablero de Control con semaforos                Resumen ejecutivo
+7.2 Botones de reporte completo                     Resumen ejecutivo
+7.3 Reporte HTML completo (ventana nueva)           Reporte
+7.4 Reporte: Curva S y Matriz de Riesgos            Reporte
+7.5 Asistente de IA                                 Resumen ejecutivo
+7.6 Info y metadata del proyecto                    Resumen ejecutivo
+8.1 Diagnostico, PMP, justificacion                 Acta y Alcance
+8.2 Blueprint completo                              Acta y Alcance
+8.3 Acta formal con botones descargar/imprimir      Acta y Alcance
+9.1 Tabla WBS con tareas y predecesoras             EDT y Cronograma
+9.2 Diagrama de Gantt con ruta critica              EDT y Cronograma
+9.3 Diccionario EDT                                 EDT y Cronograma
+10.1 Matriz RACI                                    Equipo y Recursos
+10.2 Costeo de mano de obra y subtotales            Equipo y Recursos
+10.3 Resumen de costos con reservas                 Equipo y Recursos
+10.4 Boton Usar como BAC                            Equipo y Recursos
+11.1 Formulario Nueva Fecha de Corte                EVM
+11.2 Lista de fechas de corte                       EVM
+11.3 Metricas EVM (CPI, SPI en rojo)                EVM
+11.4 Curva S con proyeccion                         EVM
+12.1 Evaluacion Economica (TCO, ROI, Payback)       Economia
+13.1 Auditorias QA/QC                               Calidad
+13.2 Pareto de defectos                             Calidad
+13.3 Resumen de calidad                             Calidad
+14.1 Tabla de riesgos con EMV                       Riesgos
+14.2 Matriz P x I                                   Riesgos
+14.3 Arbol de decision                              Riesgos
+15.1 Solicitudes de cambio                          Control de Cambios
+15.2 Boton aplicar cambios al BAC                   Control de Cambios
+16.1 Endpoint /health                               Solucion de problemas
+
+================================================================================
+FIN DEL MANUAL DE USUARIO
+================================================================================

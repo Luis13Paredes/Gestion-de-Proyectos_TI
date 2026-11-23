@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Gauge, Save, DollarSign, ShieldCheck, AlertOctagon } from 'lucide-react';
+import { Gauge, Save, DollarSign, ShieldCheck, AlertOctagon, Download, ExternalLink } from 'lucide-react';
 import { calculateProjectMetrics, formatCurrency, formatIndex } from './evmCalculations';
 import { getSemaphoreStatus, getQualityBand, QUALITY_BAND_LEGEND } from './semaphoreEngine';
 import { filterDecimal } from './inputFilters';
 import { AlertModal } from './AlertModal';
+import { downloadReportHtml, openReportWindow } from './projectReport';
 
 const toNumber = (value) => {
   const n = Number(value);
@@ -135,6 +136,22 @@ export function ControlDashboardPanel({ project, onSave }) {
       <div className="bg-white rounded-lg shadow-sm border-0 p-6">
         <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-1"><Gauge size={20} /> Tablero de Control</h3>
         <p className="text-sm text-gray-600">Vista ejecutiva con semáforos (verde / naranja / rojo) para tomar decisiones rápido, sin leer tablas.</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => openReportWindow(project)}
+            className="flex items-center gap-2 rounded-lg bg-blueprint-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blueprint-700"
+          >
+            <Download size={16} /> Generar Reporte Completo del Proyecto
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadReportHtml(project)}
+            className="flex items-center gap-2 rounded-lg border border-blueprint-600 px-5 py-2.5 text-sm font-medium text-blueprint-700 transition-colors hover:bg-blueprint-50"
+          >
+            <ExternalLink size={16} /> Descargar Reporte (.html)
+          </button>
+        </div>
       </div>
 
       {/* EVM */}

@@ -1,0 +1,266 @@
+================================================================================
+                      GESTOR DE PROYECTOS TI - SISTEMA EVM
+                    Guia facil para explicar y usar el proyecto
+================================================================================
+
+Fecha: 23 de noviembre de 2026
+Version: 1.0
+
+================================================================================
+1. QUE ES ESTE PROYECTO
+================================================================================
+
+Es una aplicacion web para gestionar proyectos de Tecnologias de la Informacion
+(TI). Su enfoque principal es el Valor Ganado (EVM), una metodologia que permite
+saber si un proyecto va bien, mal o regular en cuanto a tiempo y dinero.
+
+La aplicacion permite:
+- Crear proyectos con presupuesto (BAC), fechas, equipo y tareas (WBS).
+- Planificar cronogramas con diagrama de Gantt y ruta crítica.
+- Registrar fechas de corte para medir el avance real.
+- Calcular automaticamente indicadores EVM: CPI, SPI, CV, SV, EAC, VAC, TCPI.
+- Gestionar riesgos, calidad, cambios, equipo (RACI) y economia del proyecto.
+- Ver un tablero general (Dashboard) con todos los proyectos del portafolio.
+- Obtener recomendaciones de viabilidad mediante un Asistente de IA.
+
+Los datos se guardan en una base de datos PostgreSQL, por lo que todos los
+usuarios que abran la aplicacion veran la misma informacion actualizada.
+
+================================================================================
+2. PARA QUE SIRVE (OBJETIVO)
+================================================================================
+
+Ayudar a un gerente o estudiante de proyecto a:
+- Saber si el proyecto se esta ejecutando dentro del presupuesto y del tiempo
+  planeado.
+- Detectar desviaciones a tiempo (antes de que sea tarde).
+- Tomar decisiones basadas en numeros reales (no en suposiciones).
+- Presentar informes claros de avance, costos, riesgos y calidad.
+
+================================================================================
+3. TECNOLOGIAS QUE USA
+================================================================================
+
+- Frontend: React + Vite + Tailwind CSS + Recharts (graficos).
+- Backend: Express (Node.js) + PostgreSQL.
+- Inteligencia Artificial: Groq (modelo openai/gpt-oss-20b) para el analisis
+  de viabilidad del proyecto.
+- Base de datos: PostgreSQL (tabla projects con columna JSONB).
+
+================================================================================
+4. COMO SE EJECUTA (PASOS RAPIDOS)
+================================================================================
+
+Se necesitan DOS terminales abiertas al mismo tiempo.
+
+Paso 1: Instalar dependencias (una sola vez)
+    npm install
+
+Paso 2: Configurar variables de entorno
+    Copia .env.example a .env.local y edita:
+      DATABASE_URL=postgresql://postgres:tu_password@localhost:5432/evm_projects_db
+      GROQ_API_KEY=gsk_tu-clave-aqui   (opcional, solo para el boton de IA)
+      PORT=3000
+
+Paso 3: Crear la base de datos
+    npm run db:init
+
+Paso 4: Levantar el servidor backend (Terminal 1)
+    npm run server
+    (Mensaje: Servidor iniciado correctamente en http://localhost:3000)
+
+Paso 5: Levantar el frontend (Terminal 2)
+    npm run dev
+    (Aparece algo como: Local: http://localhost:5174)
+
+Paso 6: Abrir el navegador
+    Ingresa a: http://localhost:5174 (o el puerto que muestre Vite)
+
+================================================================================
+5. ESTRUCTURA DE LA APLICACION
+================================================================================
+
+La aplicacion tiene tres pantallas principales:
+
+A) DASHBOARD (pagina inicial)
+   - Lista de todos los proyectos creados.
+   - Tarjetas resumen: total de proyectos, proyectos en riesgo, proyectos saludables.
+   - Grafico comparativo de CPI y SPI de todos los proyectos (tablero de portafolio).
+   - Botones para: crear proyecto nuevo, ver detalle, editar o eliminar un proyecto.
+
+B) FORMULARIO DE NUEVO PROYECTO
+   - Informacion basica: nombre, descripcion, presupuesto (BAC), fechas, PM, asistente.
+   - Equipo del proyecto: agregar hasta N miembros con nombre y rol.
+   - Planificacion de tareas (WBS): crear fases y actividades, con duraciones
+     optimista, estimada y pesimista (PERT), costos, responsables y predecesoras.
+   - Validaciones automaticas antes de guardar.
+
+C) DETALLE DEL PROYECTO (el modulo mas importante)
+   Una vez seleccionas un proyecto, aparece un menu lateral con 9 secciones:
+
+   1. Resumen ejecutivo
+      - Semáforos de estado (CPI y SPI): verde = bien, amarillo = atención, rojo = crítico.
+      - Botón "Analizar con IA": envía un resumen del proyecto a la IA y recibe
+        recomendaciones concretas para mejorar la viabilidad.
+
+   2. Acta y Alcance
+      - Diagnóstico: problema y justificación del proyecto.
+      - Blueprint: arquitectura o modelo de solución propuesto.
+      - Acta formal: objetivos y alcance del proyecto.
+
+   3. EDT y Cronograma
+      - Estructura (EDT): árbol de fases y tareas con entregables, responsables y predecesoras.
+      - Cronograma: diagrama de Gantt y ruta crítica (CPM/PERT).
+      - Diccionario EDT: tabla detallada de cada actividad.
+
+   4. Equipo y Recursos
+      - Asignación (RACI): matriz de Responsable, Accountable, Consultado, Informado por tarea.
+      - Costeo (Recursos): costo por hora de cada miembro, horas laborales, factor prestacional,
+        IVA, y costos de tecnología/infraestructura (servicios externos).
+
+   5. Valor Ganado (EVM)
+      - Registro de fechas de corte (fecha, % completado, costo real, compromiso pendiente, pagado).
+      - Métricas EVM: PV, EV, AC, CV, SV, CPI, SPI, EAC, ETC, VAC, TCPI.
+      - Curva S: gráfico que compara el valor planeado vs. el valor ganado vs. el costo real.
+
+   6. Evaluación Económica
+      - TCO (Costo Total de Propiedad), ROI (Retorno de Inversión), periodo de recuperación (payback).
+
+   7. Calidad
+      - Auditorías QA/QC, Pareto de defectos, DRE, MTBF, Costo de Calidad (CoQ).
+
+   8. Riesgos
+      - Matriz 5x5 de probabilidad e impacto, EMV, RBS, árbol de decisión.
+
+   9. Control de Cambios
+      - Bitácora de solicitudes de cambio. El presupuesto (BAC) no se mueve hasta que un cambio
+        se aprueba y se aplica explícitamente.
+
+================================================================================
+6. LOS 3 PROYECTOS YA CARGADOS (PARA TU APE O DEMOSTRACIÓN)
+================================================================================
+
+Ya se crearon 3 proyectos de ejemplo en la base de datos. Sirven para mostrar
+los tres escenarios posibles de EVM:
+
+------------------------------------------------------------
+PROYECTO 1: PÉRDIDA
+------------------------------------------------------------
+Nombre: Sistema de Facturación Electrónica - PyMES
+Duración: 01-dic-2026 a 28-feb-2027
+Presupuesto (BAC): $50,000
+Administrador: Carlos Mendoza | Asistente: Ana Lopez
+Equipo: 4 miembros (Maria Garcia, Roberto Chen, Lucia Diaz, Javier Ruiz)
+Tareas: 5 actividades en 2 fases
+
+Fecha de corte registrada: 15-ene-2027
+- Avance real: 25%
+- PV (planeado): $20,000
+- EV (ganado): $12,500
+- AC (costo real): $25,000
+
+Indicadores:
+- CPI = 0.50  (rojo): por cada dólar gastado, solo se generó $0.50 de valor.
+- SPI = 0.62  (rojo): va con 38% de retraso en el cronograma.
+- CV = -$12,500 (pérdida de costo)
+- SV = -$7,500 (retraso de tiempo)
+
+Conclusión: Proyecto en pérdida, sobre presupuesto y atrasado. Requiere acciones correctivas.
+
+------------------------------------------------------------
+PROYECTO 2: ESTABLE (DENTRO DEL LÍMITE)
+------------------------------------------------------------
+Nombre: App de Inventario Minorista
+Duración: 01-dic-2026 a 31-ene-2027
+Presupuesto (BAC): $30,000
+Administrador: Elena Torres | Asistente: Marcos Vega
+Equipo: 4 miembros (Sofia Herrera, Diego Morales, Patricia Ramos, Andres Mejia)
+Tareas: 5 actividades en 2 fases
+
+Fecha de corte registrada: 10-ene-2027
+- Avance real: 50%
+- PV (planeado): $15,000
+- EV (ganado): $15,000
+- AC (costo real): $15,000
+
+Indicadores:
+- CPI = 1.00 (verde): cumple exactamente el presupuesto.
+- SPI = 1.00 (verde): cumple exactamente el cronograma.
+- CV = $0
+- SV = $0
+
+Conclusión: Proyecto estable, dentro de lo planeado, sin desviaciones significativas.
+
+------------------------------------------------------------
+PROYECTO 3: GANANCIA
+------------------------------------------------------------
+Nombre: Plataforma E-learning Universitaria
+Duración: 01-dic-2026 a 31-mar-2027
+Presupuesto (BAC): $40,000
+Administrador: Gabriela Silva | Asistente: Ricardo Navarro
+Equipo: 4 miembros (Fernando Castro, Camila Ortiz, Sebastian Duarte, Valentina Rios)
+Tareas: 5 actividades en 2 fases
+
+Fecha de corte registrada: 20-ene-2027
+- Avance real: 45%
+- PV (planeado): $12,000
+- EV (ganado): $18,000
+- AC (costo real): $10,000
+
+Indicadores:
+- CPI = 1.80 (verde): por cada dólar gastado, se generó $1.80 de valor (bajo costo).
+- SPI = 1.50 (verde): va con 50% de adelanto en el cronograma.
+- CV = +$8,000 (ahorro)
+- SV = +$6,000 (adelanto)
+
+Conclusión: Proyecto con ganancia, bajo presupuesto y adelantado.
+
+================================================================================
+7. CÓMO INTERPRETAR LOS SEMÁFOROS (CPI Y SPI)
+================================================================================
+
+CPI (Índice de Desempeño de Costo):
+- CPI >= 1.0 : El proyecto gasta menos o igual de lo planeado (BIEN).
+- CPI < 1.0  : El proyecto gasta más de lo planeado (MAL, sobrecosto).
+
+SPI (Índice de Desempeño de Cronograma):
+- SPI >= 1.0 : El proyecto va adelantado o a tiempo (BIEN).
+- SPI < 1.0  : El proyecto va atrasado (MAL, retraso).
+
+Semáforo en la app:
+- Verde: todo bien (>= 1.0)
+- Rojo: hay problema (< 1.0)
+
+================================================================================
+8. GLOSARIO RÁPIDO DE TÉRMINOS
+================================================================================
+
+BAC     = Presupuesto Autorizado (cuánto se planeó gastar en total).
+PV      = Valor Planificado (cuánto debería haberse gastado hasta hoy).
+EV      = Valor Ganado (cuánto trabajo real se completó hasta hoy, en dinero).
+AC      = Costo Real (cuánto se gastó realmente hasta hoy).
+CV      = Variación de Costo = EV - AC (positivo = ahorro, negativo = gasto extra).
+SV      = Variación de Cronograma = EV - PV (positivo = adelanto, negativo = atraso).
+CPI     = Índice de Desempeño de Costo = EV / AC.
+SPI     = Índice de Desempeño de Cronograma = EV / PV.
+EAC     = Estimación al Completo (cuánto costará el proyecto al terminar).
+ETC     = Estimación para Completar (cuánto falta gastar para terminar).
+VAC     = Variación al Completo = BAC - EAC.
+TCPI    = Índice de Desempeño de Cumple Índice (eficiencia requerida para terminar dentro del presupuesto).
+WBS/EDT = Estructura de Desglose del Trabajo (división del proyecto en tareas).
+RACI    = Matriz de responsabilidades (Responsable, Accountable, Consultado, Informado).
+Gantt   = Diagrama de barras que muestra el cronograma de actividades.
+Ruta crítica = Secuencia de tareas que determina la duración mínima del proyecto.
+
+================================================================================
+9. NOTAS IMPORTANTES PARA TU PRESENTACIÓN
+================================================================================
+
+- Siempre levanta AMBOS servidores (backend y frontend) antes de mostrar la app.
+- Si no configuraste GROQ_API_KEY, el botón "Analizar con IA" no funcionará, pero el resto de la app sí.
+- Los 3 proyectos ya están cargados en PostgreSQL, solo debes entrar a cada uno y navegar por las secciones para mostrar las capturas.
+- Para tu APE, captura pantallas de: Dashboard, detalle de proyecto, Curva S, métricas EVM, matriz RACI, árbol EDT, Gantt, control de cambios y costeo de recursos.
+
+================================================================================
+                        FIN DE LA GUÍA
+================================================================================
